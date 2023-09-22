@@ -6,8 +6,7 @@ import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool? isChecked = false;
-
+bool isChecked = true;
 
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({super.key});
@@ -20,6 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   initState() {
     checkSession().whenComplete(() async {
+      print(" checked : $isChecked");
       Timer(Duration(seconds: 2),
           () => isChecked == true ? isChecked = true : isChecked = false);
     });
@@ -35,13 +35,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var obtainSession = prefs.getBool("session");
     setState(() {
-      isChecked = obtainSession;
+      if (obtainSession != true) {
+        isChecked = false;
+      } else {
+        isChecked = true;
+      }
     });
   }
 
   saveTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("theme", GlobalValues.flagTheme.value);
+  }
+
+  Future checkTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("theme") != null && prefs.getBool("theme") != false) {
+      GlobalValues.flagTheme.value = true;
+    } else {
+      GlobalValues.flagTheme.value = false;
+    }
   }
 
   @override
@@ -102,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 return LoginScreen();
               })),
             ),
-            visible: isChecked!,
+            visible: isChecked,
           ),
           DayNightSwitcher(
             isDarkModeEnabled: GlobalValues.flagTheme.value,

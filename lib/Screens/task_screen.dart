@@ -1,5 +1,7 @@
 import 'package:app1f/database/agendadb.dart';
+import 'package:app1f/global_values.dart';
 import 'package:app1f/models/taskmodel.dart';
+import 'package:app1f/widgets/CardTaskWidget.dart';
 import 'package:flutter/material.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -16,6 +18,7 @@ class _TaskScreenState extends State<TaskScreen> {
   void initState() {
     super.initState();
     agendaDB = AgendaDB();
+
   }
 
   @override
@@ -25,32 +28,41 @@ class _TaskScreenState extends State<TaskScreen> {
         title: Text('Task Manager'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => Navigator.pushNamed(context, '/add').then((value){
+              setState(() {
+                
+              });
+            }),
             icon: Icon(Icons.task),
           )
         ],
       ),
-      body: FutureBuilder(
-        future: agendaDB!.GETALLTASK(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<TaskModel>> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: 5, // snapshot.data!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Text('Hola');
-              },
-            );
-          } else {
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text('Something was wrong !!'),
-              );
-            } else {
-              return CircularProgressIndicator();
-            }
-          }
-        },
+      body: ValueListenableBuilder(
+        valueListenable: GlobalValues.flagTask,
+        builder: (context,value,_) {
+          return FutureBuilder(
+            future: agendaDB!.GETALLTASK(),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<TaskModel>> snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length, // snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return CardTaskWidget(taskModel: snapshot.data![index],agendaDB:agendaDB);
+                  },
+                );
+              } else {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Something was wrong !!'),
+                  );
+                } else {
+                  return CircularProgressIndicator();
+                }
+              }
+            },
+          );
+        }
       ),
     );
   }

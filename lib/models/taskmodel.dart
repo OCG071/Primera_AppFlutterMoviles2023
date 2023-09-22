@@ -2,7 +2,7 @@ class TaskModel {
   int? idTask;
   String? nameTask;
   String? descTask;
-  bool? sttTask;
+  String? sttTask;
 
   TaskModel({this.idTask, this.descTask, this.nameTask, this.sttTask});
   factory TaskModel.fromMap(Map<String, dynamic> map) {

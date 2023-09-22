@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() => runApp(MainApp());
 
 class MainApp extends StatelessWidget {
+  bool? ischecked = false;
   MainApp({super.key});
 
   Future checkTheme() async {
@@ -25,14 +26,22 @@ class MainApp extends StatelessWidget {
   Future<bool?> checkSession() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getBool("session") != null && prefs.getBool("session") != false) {
+      ischecked = true;
       return true;
     } else {
+      ischecked = false;
       return false;
     }
   }
 
+  saveSession() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("session", isChecked);
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkSession();
     checkTheme();
     return ValueListenableBuilder(
         valueListenable: GlobalValues.flagTheme,
@@ -41,9 +50,11 @@ class MainApp extends StatelessWidget {
               home: FutureBuilder<bool?>(
                 future: checkSession(),
                 builder: (BuildContext context, AsyncSnapshot<bool?> snapshot) {
-                  if (snapshot.data == false) {
+                  if (isChecked == false) {
+  
                     return LoginScreen();
                   } else {
+                    print(snapshot.data);
                     return DashboardScreen();
                   }
                 },

@@ -57,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
         icon: Icon(Icons.login),
         label: Text('Entrar'),
         onPressed: () {
+          saveSession();
           Navigator.pushNamed(context, '/dash');
         });
 

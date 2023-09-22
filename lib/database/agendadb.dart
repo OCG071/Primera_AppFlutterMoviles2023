@@ -9,7 +9,7 @@ class AgendaDB {
   static final nameDB = 'AGENDADB';
   static final versionDB = 1;
 
-  static late Database? _database;
+  static Database? _database;
   Future<Database?> get database async {
     if (_database != null) return _database!;
     return _database = await _initDatabase();
