@@ -8,7 +8,9 @@ environment:
 
 dependencies:
    day_night_switcher: ^0.2.0+1
+   http: ^1.1.0
    shared_preferences: ^2.2.1
+   table_calendar: ^3.0.9
    get: ^4.6.6
    sqflite: ^2.3.0
    flutter_slider_drawer: ^2.1.3

@@ -1,19 +1,15 @@
+import 'package:app1f/Screens/add_task.dart';
 import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/models/taskmodel.dart';
 import 'package:flutter/material.dart';
 
-class CardTaskWidget extends StatefulWidget {
+class CardTaskWidget extends StatelessWidget {
   CardTaskWidget({super.key, required this.taskModel, this.agendaDB});
 
   TaskModel taskModel;
   AgendaDB? agendaDB;
 
-  @override
-  State<CardTaskWidget> createState() => _CardTaskWidgetState();
-}
-
-class _CardTaskWidgetState extends State<CardTaskWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,8 +20,8 @@ class _CardTaskWidgetState extends State<CardTaskWidget> {
         children: [
           Column(
             children: [
-              Text(widget.taskModel.nameTask!),
-              Text(widget.taskModel.descTask!)
+              Text(taskModel.nameTask!),
+              Text(taskModel.descTask!)
             ],
           ),
           Expanded(child: Container()),
@@ -36,7 +32,9 @@ class _CardTaskWidgetState extends State<CardTaskWidget> {
                   'assets/uva.png',
                   height: 50,
                 ),
-                onTap: () {},
+                onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => AddTask(taskModel: taskModel))
+                ),
               ),
               IconButton(
                   onPressed: () {
@@ -50,9 +48,9 @@ class _CardTaskWidgetState extends State<CardTaskWidget> {
                             actions: [
                               TextButton(
                                   onPressed: () {
-                                    widget.agendaDB!
+                                    agendaDB!
                                         .DELETE('tblTareas',
-                                            widget.taskModel.idTask!)
+                                            taskModel.idTask!)
                                         .then((value) {
                                       Navigator.pop(context);
                                       GlobalValues.flagTask.value = !GlobalValues.flagTask.value;

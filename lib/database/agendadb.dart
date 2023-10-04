@@ -25,12 +25,20 @@ class AgendaDB {
   }
 
   FutureOr<void> _createTables(Database db, int version) {
-    String query = '''CREATE TABLE tblTareas(
+    String query = '''
+    CREATE TABLE tblTareas(
       idTask INTEGER PRIMARY KEY,
       nameTask VARCHAR(50),
       descTask VARCHAR(50),
       sttTask BYTE
-    );''';
+    );
+    CREATE TABLE tblEventos(
+      idEvent INTEGER PRIMARY KEY,
+      descEvent VARCHAR(50),
+      dateEvent date,
+      sttEvent BYTE
+    );
+    ''';
     db.execute(query);
   }
 

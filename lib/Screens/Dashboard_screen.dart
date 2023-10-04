@@ -19,7 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   initState() {
     checkSession().whenComplete(() async {
-      print(" checked : $isChecked");
+      print(" checked : $isChecked"); 
       Timer(Duration(seconds: 2),
           () => isChecked == true ? isChecked = true : isChecked = false);
     });
@@ -116,6 +116,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               })),
             ),
             visible: isChecked,
+          ),
+          ListTile(
+            leading: const Icon(Icons.event),
+            trailing: Icon(Icons.chevron_right),
+            title: Text('Events'),
+            onTap: () => Navigator.pushNamed(context, '/popular'),
           ),
           DayNightSwitcher(
             isDarkModeEnabled: GlobalValues.flagTheme.value,
