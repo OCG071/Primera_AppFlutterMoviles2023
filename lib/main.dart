@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MainApp());
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatelessWidget { 
   bool? ischecked = false;
   MainApp({super.key});
 

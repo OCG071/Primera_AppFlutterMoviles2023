@@ -121,8 +121,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             leading: const Icon(Icons.event),
             trailing: Icon(Icons.chevron_right),
             title: Text('Events'),
+            onTap: () => Navigator.pushNamed(context, '/calendar'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.play_arrow_outlined),
+            trailing: Icon(Icons.chevron_right),
+            title: Text('Movies'),
             onTap: () => Navigator.pushNamed(context, '/popular'),
           ),
+
           DayNightSwitcher(
             isDarkModeEnabled: GlobalValues.flagTheme.value,
             onStateChanged: (isDarkModeEnabled) {
