@@ -1,9 +1,10 @@
-import 'package:app1f/Screens/login_screen.dart';
 import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/models/taskmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class AddTask extends StatefulWidget {
   AddTask({super.key, this.taskModel});
 
@@ -14,10 +15,18 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  String? auxFechaR;
+  String? auxFechaE;
+  var idT;
   String? dropDownValue = 'Pendiente';
+  String? dropDownValueP = 'Rubén Torres Frías';
   TextEditingController txtController = TextEditingController();
   TextEditingController txtContDsc = TextEditingController();
   List<String> DropDownValues = ['Pendiente', 'Completado', 'En proceso'];
+
+  List<DropdownMenuItem<String>> DropDownValuesP = [];
+  DateTime dateE = DateTime.now();
+  DateTime dateR = DateTime.now();
 
   AgendaDB? agendaDB;
 
@@ -25,6 +34,16 @@ class _AddTaskState extends State<AddTask> {
   void initState() {
     super.initState();
     agendaDB = AgendaDB();
+
+    agendaDB!.GETALLTEACHERNAME().then((list) {
+      list.map((map) {
+        print(map.toString());
+        return getDropDownWidget(map);
+      }).forEach((dropDownItem) {
+        DropDownValuesP.add(dropDownItem);
+      });
+      setState(() {});
+    });
 
     if (widget.taskModel != null) {
       txtController.text =
@@ -41,6 +60,17 @@ class _AddTaskState extends State<AddTask> {
         case 'P':
           dropDownValue = 'Pendiente';
       }
+      agendaDB!.GETTEACHERNAME(widget.taskModel!.idTeacher!).then((value) {
+        value.map((e) {
+          dropDownValueP = e['nameTeacher'].toString();
+        }).forEach((element) {
+          setState(() {});
+        });
+      });
+      dateE = DateTime.parse(widget.taskModel!.dateE!);
+      auxFechaE = dateE.toIso8601String();
+      dateR = DateTime.parse(widget.taskModel!.dateR!);
+      auxFechaR = dateR.toIso8601String();
     }
   }
 
@@ -63,7 +93,8 @@ class _AddTaskState extends State<AddTask> {
       height: 10,
     );
 
-    final DropdownButton ddBStatus = DropdownButton(
+    final DropdownButtonFormField ddBStatus = DropdownButtonFormField(
+        decoration: InputDecoration(labelText: 'Estado de la tarea '),
         value: dropDownValue,
         items: DropDownValues.map((status) => DropdownMenuItem(
               value: status,
@@ -74,35 +105,97 @@ class _AddTaskState extends State<AddTask> {
           setState(() {});
         });
 
+    final DropdownButtonFormField ddBProfesor = DropdownButtonFormField(
+        decoration: InputDecoration(labelText: 'Profesor '),
+        value: dropDownValueP,
+        items: DropDownValuesP,
+        onChanged: (value) {
+          dropDownValueP = value;
+          setState(() {});
+        });
+
+    final SizedBox btnDateExpiracion = SizedBox(
+      width: 300,
+      child: ElevatedButton(
+        child: Text('Expiration Date'),
+        onPressed: () async {
+          DateTime? newDate = await showDatePicker(
+              context: context,
+              initialDate: dateE,
+              firstDate: DateTime.utc(2020, 01, 01),
+              lastDate: DateTime.utc(2025, 12, 31));
+          if (newDate == null) return;
+          setState(() => dateE = newDate);
+          auxFechaE = dateE.toIso8601String();
+        },
+      ),
+    );
+
+    final SizedBox btnDateReminder = SizedBox(
+      width: 300,
+      child: ElevatedButton(
+        child: Text('Reminder Date'),
+        onPressed: () async {
+          DateTime? newDate = await showDatePicker(
+              context: context,
+              initialDate: dateR,
+              firstDate: DateTime.utc(2020, 01, 01),
+              lastDate: DateTime.utc(2025, 12, 31));
+          if (newDate == null) return;
+          setState(() => dateR = newDate);
+          auxFechaR = dateR.toIso8601String();
+        },
+      ),
+    );
+
     final ElevatedButton btnGuardar = ElevatedButton(
       onPressed: () {
         if (widget.taskModel == null) {
-          agendaDB!.INSERT('tblTareas', {
-            'nameTask': txtController.text,
-            'descTask': txtContDsc.text,
-            'sttTask': dropDownValue!.substring(0, 1)
-          }).then((value) {
-            var msj =
-                (value > 0) ? "La insercción fue exitosa" : "Ocurrio un error";
-            var snackbar = SnackBar(content: Text(msj));
-            ScaffoldMessenger.of(context).showSnackBar(snackbar);
-            Navigator.pop(context);
-          });
+          agendaDB!.GETTEACHERID(dropDownValueP!).then((list) {
+            list.map((e) {
+              idT = int.parse(e['idTeacher'].toString());
+            }).forEach((element) {
+              setState(() {});
+            });
+          }).whenComplete(() => agendaDB!.INSERT('tblTareas', {
+                'nameTask': txtController.text,
+                'descTask': txtContDsc.text,
+                'sttTask': dropDownValue!.substring(0, 1),
+                'dateE': auxFechaE,
+                'dateR': auxFechaR,
+                'idTeacher': idT
+              }).then((value) {
+                var msj = (value > 0)
+                    ? "La insercción fue exitosa"
+                    : "Ocurrio un error";
+                var snackbar = SnackBar(content: Text(msj));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                Navigator.pop(context);
+              }));
         } else {
-          agendaDB!.UPDATE('tblTareas', {
-            'idTask': widget.taskModel!.idTask,
-            'nameTask': txtController.text,
-            'descTask': txtContDsc.text,
-            'sttTask': dropDownValue!.substring(0, 1)
-          }).then((value) {
-            GlobalValues.flagTask.value = !GlobalValues.flagTask.value;
-            var msj = (value > 0)
-                ? "La actualización fue exitosa"
-                : "Ocurrio un error";
-            var snackbar = SnackBar(content: Text(msj));
-            ScaffoldMessenger.of(context).showSnackBar(snackbar);
-            Navigator.pop(context);
-          });
+          agendaDB!.GETTEACHERID(dropDownValueP!).then((list) {
+            list.map((e) {
+              idT = int.parse(e['idTeacher'].toString());
+            }).forEach((element) {
+              setState(() {});
+            });
+          }).whenComplete(() => agendaDB!.UPDATE('tblTareas', 'idTask', {
+                'idTask': widget.taskModel!.idTask,
+                'nameTask': txtController.text,
+                'descTask': txtContDsc.text,
+                'sttTask': dropDownValue!.substring(0, 1),
+                'dateE': auxFechaE,
+                'dateR': auxFechaR,
+                'idTeacher': idT
+              }).then((value) {
+                GlobalValues.flagTask.value = !GlobalValues.flagTask.value;
+                var msj = (value > 0)
+                    ? "La actualización fue exitosa"
+                    : "Ocurrio un error";
+                var snackbar = SnackBar(content: Text(msj));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                Navigator.pop(context);
+              }));
         }
       },
       child: Text('Save Task'),
@@ -123,10 +216,23 @@ class _AddTaskState extends State<AddTask> {
             space,
             ddBStatus,
             space,
+            btnDateExpiracion,
+            space,
+            btnDateReminder,
+            space,
+            ddBProfesor,
+            space,
             btnGuardar
           ],
         ),
       ),
+    );
+  }
+
+  DropdownMenuItem<String> getDropDownWidget(Map<String, dynamic> map) {
+    return DropdownMenuItem<String>(
+      value: map['nameTeacher'],
+      child: Text(map['nameTeacher']),
     );
   }
 }

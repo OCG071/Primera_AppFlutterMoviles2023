@@ -1,47 +1,36 @@
 // ignore: file_names
-import 'package:app1f/Screens/add_task.dart';
+import 'package:app1f/Screens/add_carrer.dart';
 import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
-import 'package:app1f/models/taskmodel.dart';
+import 'package:app1f/models/carrermodel.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
 
 // ignore: must_be_immutable
-class CardTaskWidget extends StatelessWidget {
-  CardTaskWidget({super.key, required this.taskModel, this.agendaDB});
+class CardCarrerWidget extends StatelessWidget {
+  CardCarrerWidget({super.key, required this.carrerModel, this.agendaDB});
 
-  TaskModel taskModel;
+  CarrerModel carrerModel;
   AgendaDB? agendaDB;
-  String status = '';
 
   @override
   Widget build(BuildContext context) {
-    
-    switch(taskModel.sttTask)
-    {
-      case 'E':
-        status = 'En proceso';
-        break;
-      case 'C':
-        status = 'Completado';
-        break;
-      case 'P':
-        status= 'Pendiente';
-    }
-    
-
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.all(10),
-      decoration: const BoxDecoration(color: Colors.cyan),
+      decoration: const BoxDecoration(color: Colors.lightBlue),
       child: Row(
         children: [
+          const Column(
+            children: [
+              Icon(Icons.account_balance_sharp)
+            ],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
           Column(
             children: [
-              Text(taskModel.nameTask!),
-              Text(taskModel.descTask!),
-              Text('Expiración: ' + taskModel.dateE!.substring(0, 10)),
-              Text('Estatus: '+ status)
+              Text(carrerModel.nameCarrer!)
             ],
           ),
           Expanded(child: Container()),
@@ -50,9 +39,8 @@ class CardTaskWidget extends StatelessWidget {
               GestureDetector(
                 child: Icon(Icons.preview_rounded),
                 onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AddTask(taskModel: taskModel))),
+                  context, MaterialPageRoute(builder: (context) => AddCarrer(carrerModel: carrerModel))
+                ),
               ),
               IconButton(
                   onPressed: () {
@@ -61,18 +49,16 @@ class CardTaskWidget extends StatelessWidget {
                         builder: (context) {
                           return AlertDialog(
                             title: Text("Mensaje del System"),
-                            backgroundColor: Colors.amberAccent,
-                            content: Text('Quieres borrar la tarea ???'),
+                            backgroundColor: Colors.greenAccent,
+                            content: Text('Quieres borrar la carrera ???'),
                             actions: [
                               TextButton(
                                   onPressed: () {
                                     agendaDB!
-                                        .DELETE('tblTareas', 'idTask',
-                                            taskModel.idTask!)
+                                        .DELETE('tblCarrera','idCarrer',carrerModel.idCarrer!)
                                         .then((value) {
                                       Navigator.pop(context);
-                                      GlobalValues.flagTask.value =
-                                          !GlobalValues.flagTask.value;
+                                      GlobalValues.flagCarrer.value = !GlobalValues.flagCarrer.value;
                                     });
                                   },
                                   child: Text("Si")),

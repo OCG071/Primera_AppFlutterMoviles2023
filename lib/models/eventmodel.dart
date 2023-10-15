@@ -7,10 +7,9 @@ class EventModel {
   EventModel({this.idEvent, this.descEvent, this.dateEvent, this.sttEvent});
   factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
-      idEvent: map['idEvent'],
-      descEvent: map['descEvent'],
-      dateEvent: map['dateEvent'],
-      sttEvent: map['sttEvent']
-    );
+        idEvent: map['idEvent'],
+        descEvent: map['descEvent'],
+        dateEvent: map['dateEvent'],
+        sttEvent: map['sttEvent']);
   }
 }

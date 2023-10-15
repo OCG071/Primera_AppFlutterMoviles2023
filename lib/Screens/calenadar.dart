@@ -1,28 +1,22 @@
 import 'package:app1f/database/agendadb.dart';
+import 'package:app1f/models/taskmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../models/eventmodel.dart';
-
+// ignore: must_be_immutable
 class Calendar extends StatefulWidget {
-   Calendar({super.key, this.eventModel});
-
-  EventModel? eventModel;
+  Calendar({super.key});
 
   @override
   State<Calendar> createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> {
-
-  Map<DateTime, List<EventModel>>? selectedEvents;
+  Map<DateTime, List<TaskModel>>? events;
   CalendarFormat format = CalendarFormat.month;
-  DateTime selectedDay = DateTime.now();
+  DateTime? selectedDay;
   DateTime focusedDay = DateTime.now();
-  String? dropDownValue = 'Pendiente';
-
-  TextEditingController txtDescEvent = TextEditingController();
-  List<String> DropDownValues = ['Pendiente', 'Completado', 'En proceso'];
+  late final ValueNotifier<List<TaskModel>> selectedEvents;
 
   AgendaDB? agendaDB;
 
@@ -30,60 +24,32 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     agendaDB = AgendaDB();
-
-    if (widget.eventModel != null) {
-      txtDescEvent.text =
-          widget.eventModel != null ? widget.eventModel!.descEvent! : '';
-
-      switch (widget.eventModel!.sttEvent) {
-        case 'E':
-          dropDownValue = 'En proceso';
-          break;
-        case 'C':
-          dropDownValue = 'Completado';
-          break;
-        case 'P':
-          dropDownValue = 'Pendiente';
-      }
-      selectedEvents = {};
-    }
-  }
-
-  List<EventModel> getEventsDay(DateTime date) {
-    return selectedEvents?[date] ?? [];
+    selectedDay = focusedDay;
+    selectedEvents = ValueNotifier(getEventsDay(selectedDay!));
+    selectedEvents.value = getEventsDay(selectedDay!);
   }
 
   final space = const SizedBox(
     height: 30,
   );
 
+  List<TaskModel> getEventsDay(DateTime day) {
+    print(day.toString());
+    List<TaskModel> e = [];
+    agendaDB!.GETTASKDATE(day.toIso8601String()).then((value) {
+      e = value;
+    });
+    return e;
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    final DropdownButton ddBStatus = DropdownButton(
-      value: dropDownValue,
-      items: DropDownValues.map((status) => DropdownMenuItem(
-        value: status,
-        child: Text(status),
-        )).toList(),
-      onChanged: (value) {
-        dropDownValue = value;
-        setState(() {});
-      });
-
-      final textDescEvent = TextField(
-      maxLines: 6,
-      controller: txtDescEvent,
-      decoration: const InputDecoration(
-          label: Text('Event Description'), border: OutlineInputBorder()),
-    );
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar Events'),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.list))],
+        title: const Text('Calendar Tasks'),
+        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.task))],
       ),
-      body: ListView(
+      body: Column(
         children: [
           space,
           TableCalendar(
@@ -102,6 +68,7 @@ class _CalendarState extends State<Calendar> {
               setState(() {
                 selectedDay = selectDay;
                 focusedDay = focusDay;
+                selectedEvents.value = getEventsDay(selectedDay!);
               });
             },
             selectedDayPredicate: (DateTime date) {
@@ -133,27 +100,27 @@ class _CalendarState extends State<Calendar> {
                   const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
             ),
           ),
-          space,
-          Align(
-            alignment: Alignment.bottomRight,
-            child: FloatingActionButton(
-              backgroundColor: Colors.orangeAccent,
-              child: const Icon(Icons.add),
-              onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Add Event'),
-                        content: Column(
-                          children: [
-                            space,
-                            textDescEvent,
-                            space,
-                            ddBStatus,
-                          ],
+          SizedBox(height: 8.0),
+          ValueListenableBuilder(
+              valueListenable: selectedEvents,
+              builder: (context, value, _) {
+                return ListView.builder(
+                    itemCount: value.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      )),
-            ),
-          ),
+                        child: Card(
+                          child: Text('${value[index]}'),
+                        ),
+                      );
+                    });
+              })
         ],
       ),
     );

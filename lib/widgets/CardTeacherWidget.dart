@@ -1,47 +1,39 @@
 // ignore: file_names
-import 'package:app1f/Screens/add_task.dart';
+import 'package:app1f/Screens/add_teacher.dart';
 import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
-import 'package:app1f/models/taskmodel.dart';
+import 'package:app1f/models/teachermodel.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
 
 // ignore: must_be_immutable
-class CardTaskWidget extends StatelessWidget {
-  CardTaskWidget({super.key, required this.taskModel, this.agendaDB});
+class CardTeacherWidget extends StatelessWidget {
+  CardTeacherWidget({super.key, required this.teacherModel, this.agendaDB});
 
-  TaskModel taskModel;
+  TeacherModel teacherModel;
   AgendaDB? agendaDB;
-  String status = '';
+
 
   @override
   Widget build(BuildContext context) {
-    
-    switch(taskModel.sttTask)
-    {
-      case 'E':
-        status = 'En proceso';
-        break;
-      case 'C':
-        status = 'Completado';
-        break;
-      case 'P':
-        status= 'Pendiente';
-    }
-    
-
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.all(10),
-      decoration: const BoxDecoration(color: Colors.cyan),
+      decoration: const BoxDecoration(color: Colors.orangeAccent),
       child: Row(
         children: [
+          const Column(
+            children: [Icon(Icons.account_circle)],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
           Column(
+            
             children: [
-              Text(taskModel.nameTask!),
-              Text(taskModel.descTask!),
-              Text('Expiración: ' + taskModel.dateE!.substring(0, 10)),
-              Text('Estatus: '+ status)
+              Text(teacherModel.nameTeacher!,
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(teacherModel.email!),
+              Text(teacherModel.idCarrer.toString())
             ],
           ),
           Expanded(child: Container()),
@@ -52,7 +44,8 @@ class CardTaskWidget extends StatelessWidget {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AddTask(taskModel: taskModel))),
+                        builder: (context) =>
+                            AddTeacher(teacherModel: teacherModel))),
               ),
               IconButton(
                   onPressed: () {
@@ -61,18 +54,18 @@ class CardTaskWidget extends StatelessWidget {
                         builder: (context) {
                           return AlertDialog(
                             title: Text("Mensaje del System"),
-                            backgroundColor: Colors.amberAccent,
-                            content: Text('Quieres borrar la tarea ???'),
+                            backgroundColor: Colors.greenAccent,
+                            content: Text('Quieres borrar el profesor ???'),
                             actions: [
                               TextButton(
                                   onPressed: () {
                                     agendaDB!
-                                        .DELETE('tblTareas', 'idTask',
-                                            taskModel.idTask!)
+                                        .DELETE('tblProfesor', 'idTeacher',
+                                            teacherModel.idTeacher!)
                                         .then((value) {
                                       Navigator.pop(context);
-                                      GlobalValues.flagTask.value =
-                                          !GlobalValues.flagTask.value;
+                                      GlobalValues.flagTeacher.value =
+                                          !GlobalValues.flagTeacher.value;
                                     });
                                   },
                                   child: Text("Si")),

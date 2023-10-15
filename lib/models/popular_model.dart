@@ -10,7 +10,7 @@ class PopularModel {
   String? posterPath;
   String? releaseDate;
   String? title;
- // double? voteAverage;
+  double? voteAverage;
   int? voteCount;
 
   PopularModel({
@@ -23,7 +23,7 @@ class PopularModel {
     this.posterPath,
     this.releaseDate,
     this.title,
-  //  this.voteAverage,
+    this.voteAverage,
     this.voteCount,
   });
 
@@ -38,8 +38,11 @@ class PopularModel {
       posterPath: map['poster_path'] ?? '',
       releaseDate: map['release_date'],
       title: map['title'],
-   //   voteAverage: map['vote_average'], 
+      voteAverage: (map['vote_average'] is int)
+        ? (map['vote_average'] as int ).toDouble()
+        : map['vote_average'], 
       voteCount: map['vote_count'] 
+
       
     );
   }

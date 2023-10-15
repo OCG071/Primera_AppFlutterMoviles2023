@@ -101,8 +101,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ListTile(
             leading: const Icon(Icons.task_alt_outlined),
             trailing: Icon(Icons.chevron_right),
-            title: Text('Text Manager'),
+            title: Text('Tasks'),
             onTap: () => Navigator.pushNamed(context, '/task'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.assignment_ind_rounded),
+            trailing: Icon(Icons.chevron_right),
+            title: Text('Teachers'),
+            onTap: () => Navigator.pushNamed(context, '/teacher'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_balance_outlined),
+            trailing: Icon(Icons.chevron_right),
+            title: Text('Carrers'),
+            onTap: () => Navigator.pushNamed(context, '/carrer'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.abc),
+            trailing: Icon(Icons.chevron_right),
+            title: Text('Test Provider'),
+            onTap: () => Navigator.pushNamed(context, '/prov'),
           ),
           Visibility(
             child: ListTile(
@@ -117,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             visible: isChecked,
           ),
-          ListTile(
+         ListTile(
             leading: const Icon(Icons.event),
             trailing: Icon(Icons.chevron_right),
             title: Text('Events'),
