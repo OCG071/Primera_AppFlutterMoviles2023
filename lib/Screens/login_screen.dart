@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height, //fill
-        decoration: BoxDecoration(
+        decoration: BoxDecoration( 
             image: DecorationImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(

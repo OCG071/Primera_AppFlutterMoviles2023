@@ -1,5 +1,4 @@
 import 'package:app1f/database/agendadb.dart';
-import 'package:app1f/models/taskmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -12,11 +11,13 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  Map<DateTime, List<TaskModel>>? events;
+  Map<DateTime, List<dynamic>> events = {};
+  String estatus='';
+  var e = [];
   CalendarFormat format = CalendarFormat.month;
   DateTime? selectedDay;
   DateTime focusedDay = DateTime.now();
-  late final ValueNotifier<List<TaskModel>> selectedEvents;
+  late final ValueNotifier<List<dynamic>> selectedEvents;
 
   AgendaDB? agendaDB;
 
@@ -25,34 +26,78 @@ class _CalendarState extends State<Calendar> {
     super.initState();
     agendaDB = AgendaDB();
     selectedDay = focusedDay;
-    selectedEvents = ValueNotifier(getEventsDay(selectedDay!));
-    selectedEvents.value = getEventsDay(selectedDay!);
+    selectedEvents = ValueNotifier(getElementsDay(selectedDay!));
+    loadevents();
+  }
+
+  @override
+  void dispose() {
+    selectedEvents.dispose();
+    super.dispose();
+  }
+
+  void ondayselected(DateTime selectedday, DateTime focusedday) {
+    if (!isSameDay(selectedDay, selectedday)) {
+      setState(() {
+        selectedDay = selectedday;
+        focusedDay = focusedday;
+      });
+      selectedEvents.value = getElementsDay(selectedday);
+    }
+  }
+
+  void loadevents() async {
+    final eventss = await agendaDB!.GETTASKS();
+    if (eventss != null) {
+      Map<DateTime, List> formatedEvents = {};
+      eventss.forEach((event) {
+        switch (event['sttTask']) {
+            case 'E':
+              estatus = 'En proceso';
+              break;
+            case 'C':
+              estatus = 'Completado';
+              break;
+            case 'P':
+              estatus = 'Pendiente';
+          }
+
+        final date = DateTime.parse(event['dateE']
+                .toString()
+                .replaceRange(10, null, ' 00:00:00.000Z'))
+            .toUtc();
+        formatedEvents.update(date, (value) {
+
+          value.add('Tarea: ' + event['nameTask'] + '\nEstatus: '+ estatus+'\n Descripción: '+event['descTask']);
+          return value;
+        }, ifAbsent: () => ['Tarea: ' + event['nameTask'] + '\nEstatus: '+ estatus+'\n Descripción: '+event['descTask']]);
+      });
+      setState(() {
+        events = formatedEvents;
+      });
+    }
+  }
+
+  List<dynamic> getElementsDay(DateTime day) {
+    print(events);
+    return events[day] ?? [];
   }
 
   final space = const SizedBox(
     height: 30,
   );
 
-  List<TaskModel> getEventsDay(DateTime day) {
-    print(day.toString());
-    List<TaskModel> e = [];
-    agendaDB!.GETTASKDATE(day.toIso8601String()).then((value) {
-      e = value;
-    });
-    return e;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendar Tasks'),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.task))],
       ),
       body: Column(
         children: [
           space,
           TableCalendar(
+            eventLoader: getElementsDay,
             focusedDay: DateTime.now(),
             firstDay: DateTime.utc(2020, 01, 01),
             lastDay: DateTime.utc(2025, 12, 31),
@@ -64,17 +109,10 @@ class _CalendarState extends State<Calendar> {
             },
             startingDayOfWeek: StartingDayOfWeek.sunday,
             daysOfWeekVisible: true,
-            onDaySelected: (DateTime selectDay, DateTime focusDay) {
-              setState(() {
-                selectedDay = selectDay;
-                focusedDay = focusDay;
-                selectedEvents.value = getEventsDay(selectedDay!);
-              });
-            },
+            onDaySelected: ondayselected,
             selectedDayPredicate: (DateTime date) {
               return isSameDay(selectedDay, date);
             },
-            eventLoader: getEventsDay,
             calendarStyle: const CalendarStyle(
               selectedTextStyle: TextStyle(color: Colors.white),
               todayDecoration: ShapeDecoration(

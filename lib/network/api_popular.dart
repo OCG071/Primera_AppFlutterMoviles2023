@@ -7,7 +7,7 @@ class ApiPopular {
       'https://api.themoviedb.org/3/movie/popular?api_key=f032ceb6227ace7cd176f038a213d2b5&language=es-MX&page=1%27)');
       
 
-  Future<List<PopularModel>?> getAllPopular() async {
+  Future<List<PopularModel>?> getAllPopular() async { 
     var response = await http.get(link);
     if (response.statusCode == 200) {
       var jsonResult = jsonDecode(response.body)['results'] as List;
@@ -17,4 +17,6 @@ class ApiPopular {
     }
     return null;
   }
+  
+
 }

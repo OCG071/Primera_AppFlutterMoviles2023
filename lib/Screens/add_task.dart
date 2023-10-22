@@ -2,7 +2,9 @@ import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/models/taskmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 // ignore: must_be_immutable
 class AddTask extends StatefulWidget {
@@ -15,9 +17,42 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  Future<void> initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('launch_background');
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> mostrarnotificacion(String tarea, DateTime fecha) async {
+    print('entrar not');
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails('channel_id', 'channel_ame');
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+    tz.initializeTimeZones();
+    final String timeZoneName = tz.getLocation('America/Chihuahua').toString();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+
+    await flutterLocalNotificationsPlugin.show(
+      idT,
+      tarea,
+      'Recordatorio de realización',
+      notificationDetails      
+    );
+  }
+
   String? auxFechaR;
   String? auxFechaE;
   var idT;
+
   String? dropDownValue = 'Pendiente';
   String? dropDownValueP = 'Rubén Torres Frías';
   TextEditingController txtController = TextEditingController();
@@ -34,7 +69,6 @@ class _AddTaskState extends State<AddTask> {
   void initState() {
     super.initState();
     agendaDB = AgendaDB();
-
     agendaDB!.GETALLTEACHERNAME().then((list) {
       list.map((map) {
         print(map.toString());
@@ -149,7 +183,9 @@ class _AddTaskState extends State<AddTask> {
     );
 
     final ElevatedButton btnGuardar = ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
+        WidgetsFlutterBinding.ensureInitialized();
+        await initNotifications();
         if (widget.taskModel == null) {
           agendaDB!.GETTEACHERID(dropDownValueP!).then((list) {
             list.map((e) {
@@ -157,21 +193,25 @@ class _AddTaskState extends State<AddTask> {
             }).forEach((element) {
               setState(() {});
             });
-          }).whenComplete(() => agendaDB!.INSERT('tblTareas', {
-                'nameTask': txtController.text,
-                'descTask': txtContDsc.text,
-                'sttTask': dropDownValue!.substring(0, 1),
-                'dateE': auxFechaE,
-                'dateR': auxFechaR,
-                'idTeacher': idT
-              }).then((value) {
-                var msj = (value > 0)
-                    ? "La insercción fue exitosa"
-                    : "Ocurrio un error";
-                var snackbar = SnackBar(content: Text(msj));
-                ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                Navigator.pop(context);
-              }));
+          }).whenComplete(() {
+            mostrarnotificacion(txtController.text,dateR);
+            agendaDB!.INSERT('tblTareas', {
+              'nameTask': txtController.text,
+              'descTask': txtContDsc.text,
+              'sttTask': dropDownValue!.substring(0, 1),
+              'dateE': auxFechaE,
+              'dateR': auxFechaR,
+              'idTeacher': idT
+            }).then((value) {
+              var msj = (value > 0)
+                  ? "La insercción fue exitosa"
+                  : "Ocurrio un error";
+              var snackbar = SnackBar(content: Text(msj));
+              ScaffoldMessenger.of(context).showSnackBar(snackbar);
+              Navigator.pop(context);
+              setState(() {});
+            });
+          });
         } else {
           agendaDB!.GETTEACHERID(dropDownValueP!).then((list) {
             list.map((e) {
@@ -179,23 +219,25 @@ class _AddTaskState extends State<AddTask> {
             }).forEach((element) {
               setState(() {});
             });
-          }).whenComplete(() => agendaDB!.UPDATE('tblTareas', 'idTask', {
-                'idTask': widget.taskModel!.idTask,
-                'nameTask': txtController.text,
-                'descTask': txtContDsc.text,
-                'sttTask': dropDownValue!.substring(0, 1),
-                'dateE': auxFechaE,
-                'dateR': auxFechaR,
-                'idTeacher': idT
-              }).then((value) {
-                GlobalValues.flagTask.value = !GlobalValues.flagTask.value;
-                var msj = (value > 0)
-                    ? "La actualización fue exitosa"
-                    : "Ocurrio un error";
-                var snackbar = SnackBar(content: Text(msj));
-                ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                Navigator.pop(context);
-              }));
+          }).whenComplete(() {
+            agendaDB!.UPDATE('tblTareas', 'idTask', { 
+              'idTask': widget.taskModel!.idTask,
+              'nameTask': txtController.text,
+              'descTask': txtContDsc.text,
+              'sttTask': dropDownValue!.substring(0, 1),
+              'dateE': auxFechaE,
+              'dateR': auxFechaR,
+              'idTeacher': idT
+            }).then((value) {
+              GlobalValues.flagTask.value = !GlobalValues.flagTask.value;
+              var msj = (value > 0)
+                  ? "La actualización fue exitosa"
+                  : "Ocurrio un error";
+              var snackbar = SnackBar(content: Text(msj));
+              ScaffoldMessenger.of(context).showSnackBar(snackbar);
+              Navigator.pop(context);
+            });
+          });
         }
       },
       child: Text('Save Task'),
@@ -226,6 +268,7 @@ class _AddTaskState extends State<AddTask> {
           ],
         ),
       ),
+      resizeToAvoidBottomInset: false,
     );
   }
 

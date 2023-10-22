@@ -28,7 +28,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder( 
       future: agendaDB!.GETALLTASK(),
       builder: (context, snapshot) {
         return Scaffold(
@@ -42,7 +42,7 @@ class _TaskScreenState extends State<TaskScreen> {
                     ? null
                     : () {
                         dataT = [];
-                        agendaDB!.GETALLTASK().then((list) {
+                        agendaDB!.GETALLTASK().then((list) { 
                           list.map((map) {
                             dataT.add(map.nameTask.toString());
                           }).forEach((item) {

@@ -11,8 +11,7 @@ Widget itemMovieWidget(PopularModel movie, context) {
       fit: BoxFit.fill,
       fadeInDuration: Duration(milliseconds: 2000),
       placeholder: AssetImage('assets/giphy.gif'),
-      image:
-          NetworkImage('https://image.tmdb.org/t/p/w500/${movie.posterPath}'),
+      image: NetworkImage('https://image.tmdb.org/t/p/w500/${movie.posterPath}'),
     ),
   );
 }

@@ -46,7 +46,7 @@ class AgendaDB {
       dateR TEXT,
       nameTask VARCHAR(50),
       descTask TEXT,
-      sttTask BYTE,
+      sttTask BYTE, 
       idTeacher INT,
       FOREIGN KEY(idTeacher) REFERENCES tblProfesor(idTeacher)
     );''';
@@ -96,7 +96,12 @@ class AgendaDB {
     return result.map((task) => TaskModel.fromMap(task)).toList();
   }
 
-    Future<List<TaskModel>> GETTASKDATE(String date) async {
+  Future<List<Map<String, dynamic>>?> GETTASKS() async {
+    var conexion = await database;
+    return conexion!.query('tblTareas');
+  }
+
+  Future<List<TaskModel>> GETTASKDATE(String date) async {
     var conexion = await database;
     var result = await conexion!
         .rawQuery('SELECT * FROM tblTareas where dateE = ?', ['$date']);
@@ -143,6 +148,22 @@ class AgendaDB {
     return await conexion!.rawQuery(
         'SELECT nameTeacher FROM tblProfesor WHERE idTeacher = ?',
         ['$idTeacher']);
+  }
+
+  Future<int?> GETTASKIDTEACHER(int idTeacher) async {
+    var conexion = await database;
+    final int? reg = Sqflite.firstIntValue(await conexion!.rawQuery(
+        'SELECT COUNT(*) FROM tblTareas WHERE idTeacher = ?',
+        ['$idTeacher']));
+    return reg;
+  }
+
+    Future<int?> GETTEACHERIDCARRER(int idCarrer) async {
+    var conexion = await database;
+    final int? reg = Sqflite.firstIntValue(await conexion!.rawQuery(
+        'SELECT COUNT(*) FROM tblProfesor WHERE idCarrer = ?',
+        ['$idCarrer']));
+    return reg;
   }
 
   Future<List<Map<String, dynamic>>> GETCARRERID(String carrer) async {

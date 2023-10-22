@@ -4,6 +4,7 @@ import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/models/teachermodel.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 // ignore: must_be_immutable
 class CardTeacherWidget extends StatelessWidget {
@@ -11,7 +12,7 @@ class CardTeacherWidget extends StatelessWidget {
 
   TeacherModel teacherModel;
   AgendaDB? agendaDB;
-
+  int? reg;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +29,10 @@ class CardTeacherWidget extends StatelessWidget {
             width: 10,
           ),
           Column(
-            
             children: [
               Text(teacherModel.nameTeacher!,
                   style: TextStyle(fontWeight: FontWeight.bold)),
               Text(teacherModel.email!),
-              Text(teacherModel.idCarrer.toString())
             ],
           ),
           Expanded(child: Container()),
@@ -54,18 +53,30 @@ class CardTeacherWidget extends StatelessWidget {
                         builder: (context) {
                           return AlertDialog(
                             title: Text("Mensaje del System"),
-                            backgroundColor: Colors.greenAccent,
+                            backgroundColor: Colors.amberAccent,
                             content: Text('Quieres borrar el profesor ???'),
                             actions: [
                               TextButton(
                                   onPressed: () {
                                     agendaDB!
-                                        .DELETE('tblProfesor', 'idTeacher',
+                                        .GETTASKIDTEACHER(
                                             teacherModel.idTeacher!)
                                         .then((value) {
-                                      Navigator.pop(context);
-                                      GlobalValues.flagTeacher.value =
-                                          !GlobalValues.flagTeacher.value;
+                                      if (value == 0) {
+                                        agendaDB!
+                                            .DELETE('tblProfesor', 'idTeacher',
+                                                teacherModel.idTeacher!)
+                                            .then((value) {
+                                          Navigator.pop(context);
+                                          GlobalValues.flagTeacher.value =
+                                              !GlobalValues.flagTeacher.value;
+                                        });
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                ' Error!! Este profesor tiene tareas registradas');
+                                        Navigator.pop(context);
+                                      }
                                     });
                                   },
                                   child: Text("Si")),

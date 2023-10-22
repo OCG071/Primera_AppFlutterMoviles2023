@@ -33,9 +33,9 @@ class _POpularScreenState extends State<POpularScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: .9, 
+                    childAspectRatio: .9,  
                   ),
-                  itemCount: snapshot.data!.length,
+                  itemCount: snapshot.data!.length, 
                   itemBuilder: (context, index) {
                     return itemMovieWidget(snapshot.data![index],context);
                   });

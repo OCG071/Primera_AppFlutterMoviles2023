@@ -5,15 +5,17 @@ import 'package:app1f/Screens/login_screen.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/provider/test_provider.dart';
 import 'package:app1f/routes.dart';
-import 'package:app1f/styles/styles_app.dart'; 
+import 'package:app1f/styles/styles_app.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MainApp());
+void main() async {
+  runApp(MainApp());
+}
 
 // ignore: must_be_immutable
-class MainApp extends StatelessWidget { 
+class MainApp extends StatelessWidget {
   bool? ischecked = false;
   MainApp({super.key});
 
@@ -52,11 +54,11 @@ class MainApp extends StatelessWidget {
           return ChangeNotifierProvider(
             create: (context) => TestProvider(),
             child: MaterialApp(
-                home: FutureBuilder<bool?>(
+                home: FutureBuilder<bool?>( 
                   future: checkSession(),
-                  builder: (BuildContext context, AsyncSnapshot<bool?> snapshot) {
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool?> snapshot) {
                     if (isChecked == false) {
-            
                       return LoginScreen();
                     } else {
                       print(snapshot.data);

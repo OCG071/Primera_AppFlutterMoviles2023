@@ -4,7 +4,6 @@ import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/models/taskmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
 
 // ignore: must_be_immutable
 class CardTaskWidget extends StatelessWidget {
@@ -13,35 +12,46 @@ class CardTaskWidget extends StatelessWidget {
   TaskModel taskModel;
   AgendaDB? agendaDB;
   String status = '';
+  Color? colorfondo;
+  Icon? icono;
 
   @override
   Widget build(BuildContext context) {
-    
-    switch(taskModel.sttTask)
-    {
+    switch (taskModel.sttTask) {
       case 'E':
         status = 'En proceso';
+        colorfondo = Colors.indigoAccent;
+        icono = Icon(Icons.access_alarm);
         break;
       case 'C':
         status = 'Completado';
+        colorfondo = Colors.green;
+        icono = Icon(Icons.task_alt);
         break;
       case 'P':
-        status= 'Pendiente';
+        status = 'Pendiente';
+        colorfondo = Colors.orangeAccent;
+        icono = Icon(Icons.lock_clock);
     }
-    
 
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(top: 10), 
       padding: EdgeInsets.all(10),
-      decoration: const BoxDecoration(color: Colors.cyan),
+      decoration: BoxDecoration(color: colorfondo!),
       child: Row(
         children: [
+           Column(
+            children: [icono!],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
           Column(
             children: [
               Text(taskModel.nameTask!),
               Text(taskModel.descTask!),
               Text('Expiración: ' + taskModel.dateE!.substring(0, 10)),
-              Text('Estatus: '+ status)
+              Text('Estatus: ' + status)
             ],
           ),
           Expanded(child: Container()),

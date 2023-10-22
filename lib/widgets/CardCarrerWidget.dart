@@ -2,8 +2,9 @@
 import 'package:app1f/Screens/add_carrer.dart';
 import 'package:app1f/database/agendadb.dart';
 import 'package:app1f/global_values.dart';
-import 'package:app1f/models/carrermodel.dart';
+import 'package:app1f/models/carrermodel.dart'; 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 // ignore: must_be_immutable
 class CardCarrerWidget extends StatelessWidget {
@@ -21,17 +22,13 @@ class CardCarrerWidget extends StatelessWidget {
       child: Row(
         children: [
           const Column(
-            children: [
-              Icon(Icons.account_balance_sharp)
-            ],
+            children: [Icon(Icons.account_balance_sharp)],
           ),
           const SizedBox(
             width: 10,
           ),
           Column(
-            children: [
-              Text(carrerModel.nameCarrer!)
-            ],
+            children: [Text(carrerModel.nameCarrer!)],
           ),
           Expanded(child: Container()),
           Column(
@@ -39,8 +36,10 @@ class CardCarrerWidget extends StatelessWidget {
               GestureDetector(
                 child: Icon(Icons.preview_rounded),
                 onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => AddCarrer(carrerModel: carrerModel))
-                ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddCarrer(carrerModel: carrerModel))),
               ),
               IconButton(
                   onPressed: () {
@@ -55,11 +54,27 @@ class CardCarrerWidget extends StatelessWidget {
                               TextButton(
                                   onPressed: () {
                                     agendaDB!
-                                        .DELETE('tblCarrera','idCarrer',carrerModel.idCarrer!)
+                                        .GETTEACHERIDCARRER(
+                                            carrerModel.idCarrer!)
+                                        .then((value) {
+                                          if (value == 0) {
+                                        agendaDB!
+                                        .DELETE('tblCarrera', 'idCarrer',
+                                            carrerModel.idCarrer!)
                                         .then((value) {
                                       Navigator.pop(context);
-                                      GlobalValues.flagCarrer.value = !GlobalValues.flagCarrer.value;
+                                      GlobalValues.flagCarrer.value =
+                                          !GlobalValues.flagCarrer.value;
                                     });
+                                    }
+                                    else{
+                                      Fluttertoast.showToast(
+                                      msg:
+                                      ' Error!! Esta carrera tiene profesores registrados');
+                                        Navigator.pop(context);
+                                    }
+                                        });
+
                                   },
                                   child: Text("Si")),
                               TextButton(
