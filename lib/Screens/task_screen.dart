@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
 
-  @override
+  @override 
   State<TaskScreen> createState() => _TaskScreenState();
 }
 
@@ -28,7 +28,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder( 
+    return FutureBuilder(  
       future: agendaDB!.GETALLTASK(),
       builder: (context, snapshot) {
         return Scaffold(
@@ -98,7 +98,7 @@ class _TaskScreenState extends State<TaskScreen> {
             ),
             ValueListenableBuilder(
               valueListenable: GlobalValues.flagTask,
-              builder: (context, value, _) {
+              builder: (context, value, _) { 
                 return FutureBuilder(
                   future: agendaDB!.GETTASKSST('C'),
                   builder: (BuildContext context,

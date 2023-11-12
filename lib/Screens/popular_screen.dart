@@ -16,7 +16,7 @@ class _POpularScreenState extends State<POpularScreen> {
   @override
   void initState() {
     super.initState();
-    apiPopular = ApiPopular();
+    apiPopular = ApiPopular(); 
   }
 
   @override

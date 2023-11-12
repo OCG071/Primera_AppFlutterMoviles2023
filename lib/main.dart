@@ -4,16 +4,19 @@ import 'package:app1f/Screens/Dashboard_screen.dart';
 import 'package:app1f/Screens/login_screen.dart';
 import 'package:app1f/global_values.dart';
 import 'package:app1f/provider/test_provider.dart';
-import 'package:app1f/routes.dart';
+import 'package:app1f/routes.dart'; 
 import 'package:app1f/styles/styles_app.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
+Future <void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MainApp());
 }
-
+ 
 // ignore: must_be_immutable
 class MainApp extends StatelessWidget {
   bool? ischecked = false;
@@ -38,8 +41,8 @@ class MainApp extends StatelessWidget {
       return false;
     }
   }
-
-  saveSession() async {
+ 
+  saveSession() async { 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("session", isChecked);
   }
@@ -54,7 +57,7 @@ class MainApp extends StatelessWidget {
           return ChangeNotifierProvider(
             create: (context) => TestProvider(),
             child: MaterialApp(
-                home: FutureBuilder<bool?>( 
+                home: FutureBuilder<bool?>(
                   future: checkSession(),
                   builder:
                       (BuildContext context, AsyncSnapshot<bool?> snapshot) {

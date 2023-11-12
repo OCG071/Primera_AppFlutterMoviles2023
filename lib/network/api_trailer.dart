@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiTrailer {
-  late Uri link;
+  late Uri link; 
 
   Future<List<TrailerModel>?> getTrailer(int id) async {
     link = Uri.parse(

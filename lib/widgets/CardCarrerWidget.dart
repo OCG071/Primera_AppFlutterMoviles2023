@@ -53,7 +53,7 @@ class CardCarrerWidget extends StatelessWidget {
                             actions: [
                               TextButton(
                                   onPressed: () {
-                                    agendaDB!
+                                    agendaDB! 
                                         .GETTEACHERIDCARRER(
                                             carrerModel.idCarrer!)
                                         .then((value) {
@@ -67,7 +67,7 @@ class CardCarrerWidget extends StatelessWidget {
                                           !GlobalValues.flagCarrer.value;
                                     });
                                     }
-                                    else{
+                                    else{ 
                                       Fluttertoast.showToast(
                                       msg:
                                       ' Error!! Esta carrera tiene profesores registrados');

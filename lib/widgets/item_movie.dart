@@ -15,3 +15,4 @@ Widget itemMovieWidget(PopularModel movie, context) {
     ),
   );
 }
+ 

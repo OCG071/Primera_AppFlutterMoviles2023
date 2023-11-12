@@ -12,7 +12,7 @@ class CardTeacherWidget extends StatelessWidget {
 
   TeacherModel teacherModel;
   AgendaDB? agendaDB;
-  int? reg;
+  int? reg; 
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class CardTeacherWidget extends StatelessWidget {
                             actions: [
                               TextButton(
                                   onPressed: () {
-                                    agendaDB!
+                                    agendaDB! 
                                         .GETTASKIDTEACHER(
                                             teacherModel.idTeacher!)
                                         .then((value) {

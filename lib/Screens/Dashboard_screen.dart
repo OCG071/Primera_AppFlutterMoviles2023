@@ -13,7 +13,7 @@ class DashboardScreen extends StatefulWidget {
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
-}
+} 
 
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
@@ -79,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
       return Colors.yellow;
     }
-
+ 
     return Drawer(
       child: ListView(
         children: [
@@ -146,6 +146,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             trailing: Icon(Icons.chevron_right),
             title: Text('Movies'),
             onTap: () => Navigator.pushNamed(context, '/popular'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.map),
+            title: const Text('Map'),
+            onTap: () => Navigator.pushNamed(context, '/map'),
           ),
 
           DayNightSwitcher(

@@ -50,7 +50,7 @@ class _AddTaskState extends State<AddTask> {
   }
 
   String? auxFechaR;
-  String? auxFechaE;
+  String? auxFechaE; 
   var idT;
 
   String? dropDownValue = 'Pendiente';
@@ -68,7 +68,7 @@ class _AddTaskState extends State<AddTask> {
   @override
   void initState() {
     super.initState();
-    agendaDB = AgendaDB();
+    agendaDB = AgendaDB(); 
     agendaDB!.GETALLTEACHERNAME().then((list) {
       list.map((map) {
         print(map.toString());
@@ -192,7 +192,7 @@ class _AddTaskState extends State<AddTask> {
               idT = int.parse(e['idTeacher'].toString());
             }).forEach((element) {
               setState(() {});
-            });
+            }); 
           }).whenComplete(() {
             mostrarnotificacion(txtController.text,dateR);
             agendaDB!.INSERT('tblTareas', {
@@ -218,7 +218,7 @@ class _AddTaskState extends State<AddTask> {
               idT = int.parse(e['idTeacher'].toString());
             }).forEach((element) {
               setState(() {});
-            });
+            }); 
           }).whenComplete(() {
             agendaDB!.UPDATE('tblTareas', 'idTask', { 
               'idTask': widget.taskModel!.idTask,

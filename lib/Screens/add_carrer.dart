@@ -44,7 +44,7 @@ class _AddCarrerState extends State<AddCarrer> {
       onPressed: () {
         if (widget.carrerModel == null) {
           agendaDB!.INSERT('tblCarrera', {
-            'nameCarrer': txtCarrerName.text,
+            'nameCarrer': txtCarrerName.text, 
           }).then((value) {
             var msj =
                 (value > 0) ? "La insercción fue exitosa" : "Ocurrio un error";

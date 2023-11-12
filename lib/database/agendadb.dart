@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:app1f/models/carrermodel.dart';
+import 'package:app1f/models/favoritemoviemodel.dart';
+import 'package:app1f/models/locationmodel.dart';
 import 'package:app1f/models/taskmodel.dart';
 import 'package:app1f/models/teachermodel.dart';
 import 'package:path/path.dart';
@@ -67,7 +69,32 @@ class AgendaDB {
         ('Horacio Orozco Mendoza','horacio.orozco@itcelaya.edu.mx',3)
         ;''';
 
-    List<String> queries = [query, query1, query2, query3, query4];
+    String query5 = '''CREATE TABLE tblFavoritaPelicula(
+          idFavorite INTEGER PRIMARY KEY,
+          nameMovie varchar(200),
+          image varchar(200)
+      )''';
+
+    String query6 = '''CREATE TABLE tblClima(
+      idLocation varchar(100) PRIMARY KEY,
+      lon REAL,
+      lat REAL,
+      name varchar(100)
+    )''';
+
+    String query7 = '''INSERT INTO tblClima(idLocation,lon,lat,name) values
+                      ('YO', 0.0, 0.0, 'Mi Ubicación')''';
+
+    List<String> queries = [
+      query,
+      query1,
+      query2,
+      query3,
+      query4,
+      query5,
+      query6,
+      query7,
+    ];
     for (var q in queries) {
       db.execute(q);
     }
@@ -86,6 +113,11 @@ class AgendaDB {
   }
 
   Future<int> DELETE(String tblName, String tblId, int id) async {
+    var conexion = await database;
+    return conexion!.delete(tblName, where: '$tblId = ?', whereArgs: [id]);
+  }
+
+  Future<int> DELETE_STRING(String tblName, String tblId, String id) async {
     var conexion = await database;
     return conexion!.delete(tblName, where: '$tblId = ?', whereArgs: [id]);
   }
@@ -127,6 +159,18 @@ class AgendaDB {
     return result.map((carrer) => CarrerModel.fromMap(carrer)).toList();
   }
 
+  Future<List<FavoriteMovieModel>> GETALLFAVMOV() async {
+    var conexion = await database;
+    var result = await conexion!.query('tblFavoritaPelicula');
+    return result.map((movie) => FavoriteMovieModel.fromMap(movie)).toList();
+  }
+
+  Future<List<LocationModel>> GETALLLOCATIONS() async {
+    var conexion = await database;
+    var result = await conexion!.query('tblClima');
+    return result.map((location) => LocationModel.fromMap(location)).toList();
+  }
+
   Future<List<Map<String, dynamic>>> GETALLCARRERNAME() async {
     var conexion = await database;
     return await conexion!.rawQuery('SELECT nameCarrer FROM tblCarrera');
@@ -135,6 +179,11 @@ class AgendaDB {
   Future<List<Map<String, dynamic>>> GETALLTEACHERNAME() async {
     var conexion = await database;
     return await conexion!.rawQuery('SELECT nameTeacher FROM tblProfesor');
+  }
+
+  Future<List<Map<String, dynamic>>> GET_LOCATIONS() async {
+    var conexion = await database;
+    return await conexion!.rawQuery('SELECT * FROM tblClima');
   }
 
   Future<List<Map<String, dynamic>>> GETCARRERNAME(int idCarrer) async {
@@ -153,16 +202,22 @@ class AgendaDB {
   Future<int?> GETTASKIDTEACHER(int idTeacher) async {
     var conexion = await database;
     final int? reg = Sqflite.firstIntValue(await conexion!.rawQuery(
-        'SELECT COUNT(*) FROM tblTareas WHERE idTeacher = ?',
-        ['$idTeacher']));
+        'SELECT COUNT(*) FROM tblTareas WHERE idTeacher = ?', ['$idTeacher']));
     return reg;
   }
 
-    Future<int?> GETTEACHERIDCARRER(int idCarrer) async {
+  Future<int?> GETTEACHERIDCARRER(int idCarrer) async {
     var conexion = await database;
     final int? reg = Sqflite.firstIntValue(await conexion!.rawQuery(
-        'SELECT COUNT(*) FROM tblProfesor WHERE idCarrer = ?',
-        ['$idCarrer']));
+        'SELECT COUNT(*) FROM tblProfesor WHERE idCarrer = ?', ['$idCarrer']));
+    return reg;
+  }
+
+  Future<int?> GETFAVORITESINT(int idFavorite) async {
+    var conexion = await database;
+    final int? reg = Sqflite.firstIntValue(await conexion!.rawQuery(
+        'SELECT COUNT(*) FROM tblFavoritaPelicula WHERE idFavorite = ?',
+        ['$idFavorite']));
     return reg;
   }
 

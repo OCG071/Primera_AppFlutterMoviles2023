@@ -13,7 +13,7 @@ class CarrerScreen extends StatefulWidget {
 }
 
 class _CarrerScreenState extends State<CarrerScreen> {
-  AgendaDB? agendaDB;
+  AgendaDB? agendaDB; 
   List<String> dataT = [];
 
   @override

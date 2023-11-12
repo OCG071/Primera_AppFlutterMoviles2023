@@ -14,7 +14,7 @@ class ApiCast{
       return jsonResult
           .map((cast) => CastModel.fromMap(cast))
           .toList();
-    }
+    } 
     return null;
   }
-}
+} 

@@ -67,7 +67,7 @@ class CardTaskWidget extends StatelessWidget {
               IconButton(
                   onPressed: () {
                     showDialog(
-                        context: context,
+                        context: context, 
                         builder: (context) {
                           return AlertDialog(
                             title: Text("Mensaje del System"),
@@ -79,7 +79,7 @@ class CardTaskWidget extends StatelessWidget {
                                     agendaDB!
                                         .DELETE('tblTareas', 'idTask',
                                             taskModel.idTask!)
-                                        .then((value) {
+                                        .then((value) { 
                                       Navigator.pop(context);
                                       GlobalValues.flagTask.value =
                                           !GlobalValues.flagTask.value;

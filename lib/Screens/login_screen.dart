@@ -1,3 +1,4 @@
+import 'package:app1f/firebase/email_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,6 +15,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isChecked = false;
+
+  final emailAuth = EmailAuth();
 
   saveSession() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -34,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final imgLogo = Container(
       width: 200,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: NetworkImage(
                   'https://assets.stickpng.com/thumbs/58429658a6515b1e0ad75ad4.png'))));
@@ -54,17 +57,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final btnEntrar = FloatingActionButton.extended(
-        icon: Icon(Icons.login),
-        label: Text('Entrar'),
-        onPressed: () {
-          saveSession();
-          Navigator.pushNamed(context, '/dash');
+        icon: const Icon(Icons.login),
+        label: const Text('Entrar'),
+        onPressed: () async {
+          bool res = await emailAuth.validateUser(emailUser: txtConUser.text, pwdUser: txtConPass.text);
+          if (res) {
+            Navigator.pushNamed(context, '/dash');
+          }
+          else{
+            Navigator.pushNamed(context, '/dash');
+          }
+          /*saveSession();
+          Navigator.pushNamed(context, '/dash');*/
         });
 
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height, //fill
-        decoration: BoxDecoration( 
+        decoration: const BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(
@@ -74,11 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
+ 
               Positioned(
                 child: Container(
                   height: 210,
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.blueGrey,
@@ -113,10 +124,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                   ),
-                  Text(
+                  const Text(
                     "Remeber Me",
                     style: TextStyle(color: Colors.black),
                   ),
+                  TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: const Text(
+                    "Registrarse: ",
+                    style: TextStyle(fontSize: 20),
+                  )),
                 ],
               ),
             ],

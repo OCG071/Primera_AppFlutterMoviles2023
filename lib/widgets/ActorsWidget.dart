@@ -6,7 +6,7 @@ class ActorsWidget extends StatelessWidget {
   ActorsWidget({super.key, required this.castModel});
 
   CastModel castModel;
-  String foto =
+  String foto = 
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS6TPbk510-E4DRjAw_k4G9UempXsAPLoHEQ&usqp=CAU';
 
   @override
